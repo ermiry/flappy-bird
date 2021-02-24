@@ -1,7 +1,12 @@
 import os
+import random
 import pygame
 
-pipe_img = pygame.transform.scale2x (pygame.image.load (os.path.join ("assets", "pipe.png")).convert_alpha ())
+pipe_img = None
+
+def load_pipe ():
+	global pipe_img
+	pipe_img = pygame.transform.scale2x (pygame.image.load (os.path.join ("assets", "pipe.png")).convert_alpha ())
 
 class Pipe:
 	GAP = 200
@@ -37,7 +42,7 @@ class Pipe:
 		win.blit(self.PIPE_BOTTOM, (self.x, self.bottom))
 
 
-	def collide(self, bird, win):
+	def collide(self, bird):
 		bird_mask = bird.get_mask()
 		top_mask = pygame.mask.from_surface(self.PIPE_TOP)
 		bottom_mask = pygame.mask.from_surface(self.PIPE_BOTTOM)
