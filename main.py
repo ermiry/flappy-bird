@@ -35,7 +35,7 @@ def draw(win, bird, pipes, base, score):
 
 	pygame.display.update ()
 
-def main():
+def fitness (genomes, config):
 	clock = pygame.time.Clock ()
 
 	base = Base (730)
@@ -50,7 +50,7 @@ def main():
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False
-		
+
 		# bird.move ()
 		base.move ()
 
@@ -59,7 +59,7 @@ def main():
 		for p in pipes:
 			if p.collide (bird):
 				pass
-			
+
 			if p.x + p.PIPE_TOP.get_width () < 0:
 				rem.append (p)
 
@@ -85,4 +85,29 @@ def main():
 	pygame.quit()
 	quit ()
 
-main ()
+def run (config_file):
+	config = neat.config.Config (
+		neat.DefaultGenome, neat.DefaultReproduction,
+		neat.DefaultSpeciesSet, neat.DefaultStagnation,
+		config_file
+	)
+
+	# create the population, which is the top-level object for a NEAT run.
+	p = neat.Population (config)
+
+	# add a stdout reporter to show progress in the terminal.
+	p.add_reporter (neat.StdOutReporter (True))
+	stats = neat.StatisticsReporter ()
+	p.add_reporter (stats)
+	#p.add_reporter(neat.Checkpointer(5))
+
+	# run the fitness func for up to 50 generations.
+	winner = p.run (main, 50)
+
+	# show final stats
+	print ('\nBest genome: {!s}'.format (winner))
+
+if __name__ == '__main__':
+	local_dir = os.path.dirname(__file__)
+	config_path = os.path.join(local_dir, 'config.ini')
+	run(config_path)
